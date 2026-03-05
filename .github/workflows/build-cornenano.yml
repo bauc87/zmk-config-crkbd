@@ -1,0 +1,39 @@
+name: Build Corne firmware
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y python3-pip python3-venv ninja-build dfu-util build-essential cmake git
+
+      - name: Install ZMK CLI
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install zmk
+
+      - name: Build Left side
+        run: |
+          zmk build -b nice_nano_v2 -s corne_left
+
+      - name: Build Right side
+        run: |
+          zmk build -b nice_nano_v2 -s corne_right
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: corne-uf2
+          path: app/build/zephyr/*.uf2
