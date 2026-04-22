@@ -2,41 +2,32 @@ name: Build ZMK firmware
 on:
   push:
     branches:
-      - main  # Opcional: puedes agregar otras ramas si prefieres
+      - main  # Se ejecutará con cambios en la rama 'main'
   pull_request:
     branches:
-      - main  # Igualmente, para pull requests dirigidos a 'main'
-  workflow_dispatch:  # Permite que ejecutes el workflow manualmente desde GitHub UI
+      - main  # También para PRs hacia la rama 'main'
+  workflow_dispatch:  # Permite ejecución manual del flujo de trabajo
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Usa una máquina virtual de Ubuntu para la compilación
+    runs-on: ubuntu-latest  # Usar una máquina Ubuntu para la compilación
 
     steps:
-      # Paso 1: Checkout del repositorio ZMK (obtiene la versión más reciente de ZMK)
+      # Paso 1: Checkout del repositorio ZMK
       - name: Checkout ZMK repository
         uses: actions/checkout@v2
         with:
-          repository: zmkfirmware/zmk
-          ref: main  # Esto asegura que siempre uses la versión más reciente de ZMK
+          repository: zmkfirmware/zmk  # Esto asegura que estés usando el repositorio de ZMK oficial
+          ref: main  # Asegura que se use la rama 'main' de ZMK (la más reciente)
 
-      # Paso 2: Configuración del entorno de Zephyr (sin la acción incorrecta)
+      # Paso 2: Configurar Zephyr con la acción oficial
       - name: Set up Zephyr environment
-        run: |
-          # Instalar Zephyr y sus dependencias si aún no están en la máquina
-          sudo apt update
-          sudo apt install -y python3-pip python3-setuptools python3-wheel
-          pip3 install --user --upgrade west
-
-          # Inicializa el repositorio de Zephyr si es necesario
-          west init -l zephyr
-          west update
+        uses: west-actions/setup-zephyr@v1.1  # Acción oficial para configurar Zephyr
+        with:
+          zephyr-base: zephyrproject-rtos/zephyr  # Especifica el repositorio base de Zephyr
 
       # Paso 3: Configuración y compilación del firmware
       - name: Configure and Build Firmware
         run: |
-          # Aquí puedes asegurarte de que todos los submódulos de Zephyr estén actualizados
-          west update
-          
-          # Compilación del firmware para tu dispositivo Nice!Nano V2
-          west build -b nice_nano_v2  # Cambia el nombre de tu objetivo si es diferente
+          west update  # Asegúrate de que todo esté actualizado en tu entorno
+          west build -b nice_nano_v2  # Compilación del firmware para el dispositivo Nice!Nano V2
