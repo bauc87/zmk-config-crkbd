@@ -2,32 +2,12 @@ name: Build ZMK firmware
 on:
   push:
     branches:
-      - main  # Se ejecutará con cambios en la rama 'main'
+      - main  # Cambios en la rama 'main'
   pull_request:
     branches:
-      - main  # También para PRs hacia la rama 'main'
-  workflow_dispatch:  # Permite ejecución manual del flujo de trabajo
+      - main  # PRs dirigidos a la rama 'main'
+  workflow_dispatch:  # Permite ejecución manual desde GitHub UI
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Usar una máquina Ubuntu para la compilación
-
-    steps:
-      # Paso 1: Checkout del repositorio ZMK
-      - name: Checkout ZMK repository
-        uses: actions/checkout@v2
-        with:
-          repository: zmkfirmware/zmk  # Esto asegura que estés usando el repositorio de ZMK oficial
-          ref: main  # Asegura que se use la rama 'main' de ZMK (la más reciente)
-
-      # Paso 2: Configurar Zephyr con la acción oficial
-      - name: Set up Zephyr environment
-        uses: west-actions/setup-zephyr@v1.1  # Acción oficial para configurar Zephyr
-        with:
-          zephyr-base: zephyrproject-rtos/zephyr  # Especifica el repositorio base de Zephyr
-
-      # Paso 3: Configuración y compilación del firmware
-      - name: Configure and Build Firmware
-        run: |
-          west update  # Asegúrate de que todo esté actualizado en tu entorno
-          west build -b nice_nano_v2  # Compilación del firmware para el dispositivo Nice!Nano V2
+    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.3  # Aquí se usa el flujo de trabajo predefinido del repositorio de ZMK
