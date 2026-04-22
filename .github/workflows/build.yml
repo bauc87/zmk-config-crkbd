@@ -20,14 +20,23 @@ jobs:
           repository: zmkfirmware/zmk
           ref: main  # Esto asegura que siempre uses la versión más reciente de ZMK
 
-      # Paso 2: Configuración del entorno de Zephyr (si estás usando Zephyr)
+      # Paso 2: Configuración del entorno de Zephyr (sin la acción incorrecta)
       - name: Set up Zephyr environment
-        uses: west-actions/setup-zephyr@v2
-        with:
-          zephyr-base: zephyrproject-rtos/zephyr
+        run: |
+          # Instalar Zephyr y sus dependencias si aún no están en la máquina
+          sudo apt update
+          sudo apt install -y python3-pip python3-setuptools python3-wheel
+          pip3 install --user --upgrade west
+
+          # Inicializa el repositorio de Zephyr si es necesario
+          west init -l zephyr
+          west update
 
       # Paso 3: Configuración y compilación del firmware
       - name: Configure and Build Firmware
         run: |
-          west update  # Actualiza todos los submódulos de Zephyr si es necesario
-          west build -b nice_nano_v2  # Construye el firmware para tu dispositivo Nice!Nano V2
+          # Aquí puedes asegurarte de que todos los submódulos de Zephyr estén actualizados
+          west update
+          
+          # Compilación del firmware para tu dispositivo Nice!Nano V2
+          west build -b nice_nano_v2  # Cambia el nombre de tu objetivo si es diferente
