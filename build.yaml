@@ -25,6 +25,3 @@ include:
     shield: corne_right
   - board: nice_nano_v2
     shield: settings_reset
-zmk:
-     remote: zmkfirmware
-     revision: v0.1

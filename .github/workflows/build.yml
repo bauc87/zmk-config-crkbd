@@ -10,4 +10,4 @@ on:
 
 jobs:
   build:
-    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.3  # Aquí se usa el flujo de trabajo predefinido del repositorio de ZMK
+    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.1  # Aquí se usa el flujo de trabajo predefinido del repositorio de ZMK
